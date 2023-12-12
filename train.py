@@ -39,6 +39,8 @@ def get_optimizer(optimizer_config, parameters):
         return optim.AdamW(parameters, **optimizer_config['args'])
     elif optimizer_config['type'] == 'Lion':
         return optim.Lion(parameters, **optimizer_config['args'])
+    elif optimizer_config['type'] == 'RMSprop':
+        return optim.RMSprop(parameters, **optimizer_config['args']) #  lr=0.001, alpha=0.9, weight_decay=0.01
     # Add other optimizer types here if needed
 
 def get_lr_scheduler(scheduler_config, optimizer):
