@@ -59,9 +59,8 @@ def get_model(model_name):
     return model_class
 
 def create_model_filename(config):
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    korean_time = convert_kst(current_time)
-    filename = f"{korean_time}_{config['thismodel']}_{config['augmentation']}_{config['criterion']}_{config['size']}_{config['num_batches']}_{config['num_epochs']}.pth"
+    current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    filename = f"{current_time}_{config['thismodel']}_{config['augmentation']}_{config['criterion']}_{config['size']}_{config['num_batches']}_{config['num_epochs']}.pth"
     return filename
 
 def seed_everything(seed):
@@ -141,6 +140,9 @@ def main(config_path):
         train_losses = train(model, train_loader, criterion, optimizer, device)
         val_losses, val_metrics, val_class_f1_scores = valid(model, val_loader, criterion, device)
 
+        print('Epoch {}, Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid Metric: {:.4f}, Valid class_f1score:{}'.format(epoch+1, np.mean(train_losses), np.mean(val_losses), np.mean(val_metrics),val_class_f1_scores))
+        logging.info('Epoch {}, Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid Metric: {:.4f}, Valid class_f1score:{}'.format(epoch+1, np.mean(train_losses), np.mean(val_losses), np.mean(val_metrics),val_class_f1_scores))
+        
         # Update learning rate 
         lr_scheduler.step()
 
@@ -179,9 +181,6 @@ def main(config_path):
             print(f'Current best loss: {best_model_path}')
             logging.info('Epoch {},Current best loss: {}'.format(epoch+1,best_model_path))
 
-        print('Epoch {}, Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid Metric: {:.4f}, Valid class_f1score:{}'.format(epoch+1, np.mean(train_losses), np.mean(val_losses), np.mean(val_metrics),val_class_f1_scores))
-        logging.info('Epoch {}, Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid Metric: {:.4f}, Valid class_f1score:{}'.format(epoch+1, np.mean(train_losses), np.mean(val_losses), np.mean(val_metrics),val_class_f1_scores))
-        
         if early_stopping_epochs == early_stop_counter:
             break
 
@@ -190,7 +189,7 @@ def main(config_path):
 
     print(f'Final Please type python predict.py --pth {best_model_path}')
     logging.info(f'Final Please type python predict.py --pth {best_model_path}')
-    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, required=True, help='Path to config file')
