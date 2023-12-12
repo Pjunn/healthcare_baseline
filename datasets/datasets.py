@@ -12,7 +12,7 @@ class BaselineDataset(Dataset):
         return len(self.df)
     
     def __getitem__(self, idx):
-        img_name, label = self.df.iloc[idx]
+        img_name, __, __, label = self.df.iloc[idx]
         img_fname = f'../Dataset/sample_data/image/{img_name}'
         img = Image.open(img_fname)
         

@@ -1,7 +1,7 @@
 import torch
 from tqdm import tqdm
 from sklearn.metrics import f1_score
-from loss import *
+from trainer.loss_custom import *
 
 # Define the training function
 def train(model, train_loader, criterion, optimizer, device):
