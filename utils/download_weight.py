@@ -7,6 +7,8 @@ def download(model_name):
     
     state_dict = model.state_dict()
 
+    model_name.replace('.','-')
+
     weights_path = f'{model_name}_weights.pth'
 
     torch.save(state_dict, weights_path)
