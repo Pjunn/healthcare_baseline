@@ -26,5 +26,6 @@
   "seed": 20,
   "early_stop": 5,
   "num_workers": 4,
-  "amp": 1
+  "amp": 1,
+  "monitor": "loss" 
 }
