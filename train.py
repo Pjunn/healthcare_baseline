@@ -117,7 +117,7 @@ def main(config_path):
 
     # Load the data
     df = pd.read_csv(f'../Dataset/input.csv')
-    train_df, val_df = train_test_split(df, test_size=0.25, stratify=df['decayed'], random_state=20231101)
+    train_df, val_df = train_test_split(df, test_size=0.25, stratify=df['teeth_num'], random_state=20231101)
 
     # Prepare dataset
     train_dataset = BaselineDataset(train_df, transform=tr_transform)
