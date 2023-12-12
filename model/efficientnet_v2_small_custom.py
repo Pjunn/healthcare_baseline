@@ -4,12 +4,12 @@ import torch.nn as nn
 import timm
 from model.basemodel import BaseModel
 
-class Efficientnet_v2_small(BaseModel):
+class Efficientnet_v2_s(BaseModel):
     def __init__(self):
-        super(Efficientnet_v2_small, self).__init__()
+        super(Efficientnet_v2_s, self).__init__()
 
-        # model_name = 'tf_efficientnet_b7'
-        # pretrained_weights_path = '/USER/weights/tf_efficientnet_b7_weights.pth'
+        model_name = 'tf_efficientnetv2_s'
+        pretrained_weights_path = '../weights/tf_efficientnetv2_s-in21k_ft_in1k_weights.pth'
         # 수정바람
 
         model = timm.create_model(model_name, pretrained=False)
