@@ -42,6 +42,6 @@ def valid(model, val_loader, criterion, device):
             all_labels.extend(labels.cpu().numpy())
             all_preds.extend(preds.cpu().numpy())
             
-    metrics = f1_score(all_labels, all_preds, average=None)
+    metrics = f1_score(all_labels, all_preds, average='macro')
     class_f1_scores = f1_score(all_labels, all_preds, average=None)
     return losses, metrics, class_f1_scores
