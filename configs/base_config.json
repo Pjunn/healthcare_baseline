@@ -2,7 +2,7 @@
   "num_epochs": 5,
   "num_batches": 32,
   "augmentation": "BaseAugmentation",
-  "thismodel": "Efficientnet_v2_s",
+  "thismodel": "Efficientnet_v2_small",
   "size": 224,
   "criterion": "BCELoss",
   "optimizer": {
