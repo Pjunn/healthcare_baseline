@@ -89,9 +89,6 @@ def main(config_path):
     early_stop_counter = 0
     early_stopping_epochs = config['early_stop']
 
-    best_model_filename = ""
-    last_saved_folder = ""
-
     # Set logger
     if not os.path.exists('logs'):
         os.makedirs('logs')
@@ -140,54 +137,60 @@ def main(config_path):
     lr_scheduler = get_lr_scheduler(config['lr_scheduler'], optimizer)
 
     # Train the model
-    train_loss_list, val_loss_list, val_metric_list = [], [], []
     for epoch in range(num_epochs):
         train_losses = train(model, train_loader, criterion, optimizer, device)
         val_losses, val_metrics, val_class_f1_scores = valid(model, val_loader, criterion, device)
+
+        # Update learning rate 
         lr_scheduler.step()
+
         avg_val_loss = np.mean(val_losses)
-        avg_val_metric = np.mean(val_metrics)
-        avg_val_metric_str = '{:05}'.format(int(avg_val_metric * 10000))
+
+        val_metric_str = '{:05}'.format(int(val_metrics * 10000))
         if avg_val_loss < min_val_loss:
             min_val_loss = avg_val_loss
-            best_model_filename = filename.replace(".pth", f"_metric_{avg_val_metric_str}_epoch{epoch+1}.pth")
-            torch.save(model.state_dict(), best_model_filename)
+
+            # Reset early stopping counter
+            early_stop_counter = 0
+            best_model_filename = filename.replace(".pth", f"_metric_{val_metric_str}_epoch{epoch+1}.pth")
+            newfilename = filename.replace(".pth", "")
+
+            folder_name = f"./runs/{newfilename}/epoch_{(epoch//5+1)*5}" # if epoch is 1 it will be 5
+            os.makedirs(folder_name, exist_ok=True)
+
+            best_model_path = os.path.join(folder_name, best_model_filename)
+
+            torch.save(model.state_dict(), best_model_path)
+        else:
+            early_stop_counter += 1
 
         # Every 5 epochs, check if the best model of this block is better than the last saved model
         if (epoch + 1) % 5 == 0:
             newfilename = filename.replace(".pth", "")
             folder_name = f"./runs/{newfilename}/epoch_{epoch+1}"
-            os.makedirs(folder_name, exist_ok=True)
             
-            if os.path.exists(best_model_filename):
-                shutil.move(best_model_filename, os.path.join(folder_name, os.path.basename(best_model_filename)))
-                last_saved_folder = folder_name
-                # Update the overall best model filename
-                overall_best_model_filename = os.path.join(folder_name, os.path.basename(best_model_filename))
-            else: # if there is no best_loss in this 5 epochs
-                early_stop_counter += 1
+            # Delete all .pth files except best model
+            if os.path.exists(folder_name):
+                for model_filename in os.listdir(folder_name):
+                    if model_filename != best_model_filename:
+                        os.remove(os.path.join(folder_name, model_filename))
 
-            # Reset maximum validation loss for the next 5 epochs
-            
-            print(f'Current best loss: {overall_best_model_filename}')
-            print(f'<if stop> Please type python predict.py --pth {overall_best_model_filename}')
-            logging.info('Epoch {},Current best loss: {}'.format(epoch+1,overall_best_model_filename))
-            logging.info('Epoch {}, <if stop> Please type python predict.py --pth {}'.format(epoch+1,overall_best_model_filename))
+            # Print minimum validation loss for 5 epochs
+            print(f'Current best loss: {best_model_path}')
+            logging.info('Epoch {},Current best loss: {}'.format(epoch+1,best_model_path))
 
-            # Delete all .pth files starting with filename in the runs directory
-            filenamestart = filename.replace(".pth","")
-            for file in glob.glob(f"./{filenamestart}*.pth"):
-                os.remove(file)
-        print('Epoch {}, Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid Metric: {:.4f}, Valid f1_score:{}'.format(epoch+1, np.mean(train_losses), np.mean(val_losses), np.mean(val_metrics),val_class_f1_scores))
-        logging.info('Epoch {}, Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid Metric: {:.4f}, Valid f1_score:{}'.format(epoch+1, np.mean(train_losses), np.mean(val_losses), np.mean(val_metrics),val_class_f1_scores))
+        print('Epoch {}, Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid Metric: {:.4f}, Valid class_f1score:{}'.format(epoch+1, np.mean(train_losses), np.mean(val_losses), np.mean(val_metrics),val_class_f1_scores))
+        logging.info('Epoch {}, Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid Metric: {:.4f}, Valid class_f1score:{}'.format(epoch+1, np.mean(train_losses), np.mean(val_losses), np.mean(val_metrics),val_class_f1_scores))
         
         if early_stopping_epochs == early_stop_counter:
             break
-    # Save model
-    print(f'Final best loss: {overall_best_model_filename}')
-    print(f'Final Please type python predict.py --pth {overall_best_model_filename}')
-    logging.info(f'Final best loss: {overall_best_model_filename}')
-    logging.info(f'Final Please type python predict.py --pth {overall_best_model_filename}')
+
+    print(f'Final best loss: {best_model_path}')
+    logging.info(f'Final best loss: {best_model_path}')
+
+    print(f'Final Please type python predict.py --pth {best_model_path}')
+    logging.info(f'Final Please type python predict.py --pth {best_model_path}')
+    
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, required=True, help='Path to config file')
