@@ -1,7 +1,7 @@
 {
   "num_epochs": 100,
   "num_batches": 32,
-  "augmentation": "BaseAugmentation",
+  "augmentation": "BaseAlbuAugmentation",
   "thismodel": "Efficientnet_v2_small",
   "size": 224,
   "criterion": "BCELoss",
