@@ -116,8 +116,8 @@ def main(config_path):
     criterion = config['criterion']
 
     # Load the data
-    df = pd.read_csv(f'/DATA/train/train.csv')
-    train_df, val_df = train_test_split(df, test_size=0.25, stratify=df['risk'], random_state=20231101)
+    df = pd.read_csv(f'../Dataset/input.csv')
+    train_df, val_df = train_test_split(df, test_size=0.25, stratify=df['decayed'], random_state=20231101)
 
     # Prepare dataset
     train_dataset = BaselineDataset(train_df, transform=tr_transform)
