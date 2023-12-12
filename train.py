@@ -74,10 +74,16 @@ def seed_everything(seed):
     random.seed(seed)
 
 def main(config_path):
+    # get JSON config
     config = load_config(config_path)
     
+    # set seed
     seed_everything(config['seed'])
+    
+    # make save file name from config
     filename = create_model_filename(config)
+
+    # parameter for save
     min_val_loss = float('inf')
 
     early_stop_counter = 0
@@ -89,7 +95,6 @@ def main(config_path):
     # Set logger
     if not os.path.exists('logs'):
         os.makedirs('logs')
-
     filename_wo_pth = filename.split('.')[0]
     f = open(f'./logs/{filename_wo_pth}.log', 'w')
     f.close
@@ -106,13 +111,16 @@ def main(config_path):
     num_epochs = config['num_epochs']
     num_batches = config['num_batches']
     size = config['size']
+
+    # Get model
     thismodel = get_model(config['thismodel'])
 
-    # augmentation module
+    # Set augmentation module
     transform_module = getattr(importlib.import_module("datasets.augmentation"), config['augmentation'])
     tr_transform = transform_module(img_size=size, is_train=True)
     val_transform = transform_module(img_size=size, is_train=False)
-
+    
+    # Set criterion
     criterion = config['criterion']
 
     # Load the data
@@ -122,8 +130,9 @@ def main(config_path):
     # Prepare dataset
     train_dataset = BaselineDataset(train_df, transform=tr_transform)
     val_dataset = BaselineDataset(val_df, transform=val_transform)
-    train_loader = DataLoader(train_dataset, batch_size=num_batches, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=num_batches, shuffle=False)
+
+    train_loader = DataLoader(train_dataset, batch_size=num_batches, shuffle=True, num_workers=config['num_workers'])
+    val_loader = DataLoader(val_dataset, batch_size=num_batches, shuffle=False, num_workers=config['num_workers'])
 
     # Initialize the model, loss function, optimizer, and lr_scheduler
     model = thismodel().to(device)
