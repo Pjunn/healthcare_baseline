@@ -25,5 +25,6 @@
   },
   "seed": 20,
   "early_stop": 5,
-  "num_workers": 4
+  "num_workers": 4,
+  "amp": 1
 }

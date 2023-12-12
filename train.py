@@ -16,9 +16,8 @@ import logging
 import os
 import shutil
 
-from model.basemodel import *
-from model.loss import *
-from datasets.datasets import *
+
+from datasets.datasets import BaselineDataset, BaselineTestDataset
 from trainer.trainer import *
 
 import importlib
@@ -137,7 +136,10 @@ def main(config_path):
 
     # Train the model
     for epoch in range(num_epochs):
-        train_losses = train(model, train_loader, criterion, optimizer, device)
+        if config['amp']:
+            train_losses = train_amp(model, train_loader, criterion, optimizer, device)
+        else:
+            train_losses = train(model, train_loader, criterion, optimizer, device)
         val_losses, val_metrics, val_class_f1_scores, valid_accuracy = valid(model, val_loader, criterion, device)
 
         print('Epoch {}, Train Loss: {:.4f}, Valid Loss: {:.4f}, Valid Metric: {:.4f}, Valid class_f1score:{}, Valid Accuracy: {:.4f}'.format(epoch+1, np.mean(train_losses), np.mean(val_losses), np.mean(val_metrics),val_class_f1_scores), valid_accuracy)

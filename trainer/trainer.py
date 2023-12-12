@@ -22,6 +22,26 @@ def train(model, train_loader, criterion, optimizer, device):
         losses.append(loss.item())
     return losses
 
+# Define the training function
+def train_amp(model, train_loader, criterion, optimizer, device):
+    model.train()
+    losses = []
+    criterion = create_criterion(criterion)
+    scaler = torch.cuda.amp.GradScaler()
+    for inputs, labels in tqdm(train_loader):
+        inputs, labels = inputs.to(device), labels.float().to(device)
+        
+        optimizer.zero_grad()
+        with torch.cuda.amp.autocast():
+            outputs = model(inputs).view(-1)
+            loss = criterion(outputs, labels)
+        
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
+        losses.append(loss.item())
+    return losses
+
 
 # Define the validation function
 def valid(model, val_loader, criterion, device):
@@ -46,3 +66,4 @@ def valid(model, val_loader, criterion, device):
     class_f1_scores = f1_score(all_labels, all_preds, average=None)
     accuracy = accuracy_score(all_labels, all_preds)
     return losses, metrics, class_f1_scores, accuracy
+
