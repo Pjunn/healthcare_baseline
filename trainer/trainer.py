@@ -1,6 +1,6 @@
 import torch
 from tqdm import tqdm
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, accuracy_score
 from trainer.loss_custom import *
 
 # Define the training function
@@ -44,4 +44,5 @@ def valid(model, val_loader, criterion, device):
             
     metrics = f1_score(all_labels, all_preds, average='macro')
     class_f1_scores = f1_score(all_labels, all_preds, average=None)
-    return losses, metrics, class_f1_scores
+    accuracy = accuracy_score(all_labels, all_preds)
+    return losses, metrics, class_f1_scores, accuracy
