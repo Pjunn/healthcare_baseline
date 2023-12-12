@@ -26,7 +26,7 @@ def train(model, train_loader, criterion, optimizer, device):
 # Define the validation function
 def valid(model, val_loader, criterion, device):
     model.eval()
-    losses, metrics = [], []
+    losses = []
     all_labels, all_preds = [], []
     criterion = create_criterion(criterion)
     with torch.no_grad():
@@ -42,6 +42,6 @@ def valid(model, val_loader, criterion, device):
             all_labels.extend(labels.cpu().numpy())
             all_preds.extend(preds.cpu().numpy())
             
-            metrics.append(f1_score(labels.cpu(), preds.cpu(), average='macro'))
+    metrics = f1_score(all_labels, all_preds, average=None)
     class_f1_scores = f1_score(all_labels, all_preds, average=None)
     return losses, metrics, class_f1_scores
