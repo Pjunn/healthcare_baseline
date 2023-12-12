@@ -7,7 +7,7 @@ def download(model_name):
     
     state_dict = model.state_dict()
 
-    model_name.replace('.','-')
+    model_name = model_name.replace('.','-')
 
     weights_path = f'{model_name}_weights.pth'
 
