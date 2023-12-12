@@ -1,5 +1,5 @@
 {
-  "num_epochs": 5,
+  "num_epochs": 100,
   "num_batches": 32,
   "augmentation": "BaseAugmentation",
   "thismodel": "Efficientnet_v2_small",
@@ -24,5 +24,6 @@
     }
   },
   "seed": 20,
-  "early_stop": 1
+  "early_stop": 5,
+  "num_workers": 4
 }
