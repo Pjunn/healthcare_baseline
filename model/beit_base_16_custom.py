@@ -16,14 +16,14 @@ class Beit_base_16(BaseModel):
         model.load_state_dict(state_dict)
 
         self.model = model
-        n_features = self.model.head.fc.in_features
+        n_features = self.model.head.in_features
         self.fc = nn.Sequential(
             nn.Linear(n_features, 512),
             nn.LeakyReLU(),
             nn.Dropout(0.5),
             nn.Linear(512, 1)
         )
-        self.model.head.fc = self.fc
+        self.model.head = self.fc
 
     def forward(self, x):
         x = self.model(x)
