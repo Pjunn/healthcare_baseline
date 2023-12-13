@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw
 import numpy as np
 import ast
+import tqdm
 
 def create_masked_tooth_image(image_path, segmentation, save_path):
     """
@@ -28,14 +29,17 @@ def create_masked_tooth_image(image_path, segmentation, save_path):
 
     # Convert array back to image and save the result
     masked_tooth_image = Image.fromarray(image_array)
-    masked_tooth_image.save(save_path)
+    resized_image = masked_tooth_image.resize((224, 224))
+
+    # Save the resized masked image
+    resized_image.save(save_path)
 
     return save_path
 
 import csv
 
 # Replace 'input.csv' with the path to your actual CSV file
-csv_file_path = '/Users/jeonjisu/Desktop/대학/대회/헬스케어/output.csv'
+csv_file_path = '../../healthcare_baseline/utils/train_input.csv'
 
 # Open the CSV file
 with open(csv_file_path, mode='r', encoding='utf-8') as csv_file:
@@ -43,11 +47,11 @@ with open(csv_file_path, mode='r', encoding='utf-8') as csv_file:
     csv_reader = csv.DictReader(csv_file)
     
     # Loop through the rows in the CSV file
-    for row in csv_reader:
+    for row in tqdm(csv_reader, desc="Processing Images"):
         # Print the 'decayed' column
-        newname = '/Users/jeonjisu/Desktop/대학/대회/헬스케어/imagemask/' + row['path'].replace('.png','') + '_' + row['teeth_num'] + '.png'
+        newname = '../../Dataset/train_data/imagemask/' + row['path'].replace('.png','') + '_' + row['teeth_num'] + '.png'
         segmentation_example = ast.literal_eval(row['segmentation'])
-        imgpath = '/Users/jeonjisu/Desktop/대학/대회/헬스케어/image/' + row['path']
+        imgpath = '../../Dataset/train_data/image/' + row['path']
         create_masked_tooth_image(imgpath, segmentation_example, newname)
 
 # Example segmentation data
