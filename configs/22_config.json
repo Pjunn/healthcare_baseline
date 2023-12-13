@@ -1,0 +1,31 @@
+{
+  "num_epochs": 100,
+  "num_batches": 32,
+  "augmentation": "BaseAlbuAugmentation",
+  "thismodel": "Vit_base_patch16",
+  "size": 224,
+  "criterion": "BCELoss",
+  "optimizer": {
+    "type": "AdamW",
+    "args": {
+      "lr": 0.00001,
+      "weight_decay": 1e-5
+  }
+  },
+  "lr_scheduler": {
+    "type": "CosineAnnealingWarmupRestarts",
+    "args": {
+        "first_cycle_steps": 1000,
+        "cycle_mult": 1.0,
+        "max_lr": 1e-4,
+        "min_lr": 1e-5,
+        "warmup_steps": 200,
+        "gamma": 1
+    }
+  },
+  "seed": 20,
+  "early_stop": 5,
+  "num_workers": 4,
+  "amp": 1,
+  "monitor": "loss" 
+}
