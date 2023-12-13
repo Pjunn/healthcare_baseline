@@ -4,9 +4,9 @@ import torch.nn as nn
 import timm
 from model.basemodel import BaseModel
 
-class Vit_base_patch14(BaseModel):
+class Vit_large_patch14(BaseModel):
     def __init__(self):
-        super(Vit_base_patch14, self).__init__()
+        super(Vit_large_patch14, self).__init__()
 
         model_name = 'vit_large_patch14_clip_224'
         pretrained_weights_path = '../weights/vit_large_patch14_clip_224-openai_ft_in12k_in1k_weights.pth'
