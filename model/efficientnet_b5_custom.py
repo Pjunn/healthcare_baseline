@@ -9,7 +9,7 @@ class Efficientnet_b5(BaseModel):
         super(Efficientnet_b5, self).__init__()
 
         model_name = 'tf_efficientnet_b5'
-        pretrained_weights_path = '/USER/weights/tf_efficientnet_b5_weights.pth'
+        pretrained_weights_path = '../weights/tf_efficientnet_b5-ns_jft_in1k_weights.pth'
 
         model = timm.create_model(model_name, pretrained=False)
         state_dict = torch.load(pretrained_weights_path)

@@ -8,8 +8,8 @@ class Efficientnet_v2_large(BaseModel):
     def __init__(self):
         super(Efficientnet_v2_large, self).__init__()
 
-        # model_name = 'tf_efficientnet_b7'
-        # pretrained_weights_path = '/USER/weights/tf_efficientnet_b7_weights.pth'
+        model_name = 'tf_efficientnetv2_l'
+        pretrained_weights_path = '../weights/tf_efficientnetv2_l-in21k_ft_in1k_weights.pth'
         # 수정바람
 
         model = timm.create_model(model_name, pretrained=False)

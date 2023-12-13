@@ -9,7 +9,7 @@ class Convnext_base(BaseModel):
         super(Convnext_base, self).__init__()
 
         model_name = 'convnext_base.fb_in22k_ft_in1k'
-        pretrained_weights_path = '/USER/weights/convnext_base_fb_in22k_ft_in1k_weights.pth'
+        pretrained_weights_path = '../weights/convnext_base-fb_in22k_ft_in1k_weights.pth'
 
         model = timm.create_model(model_name, pretrained=False)
         state_dict = torch.load(pretrained_weights_path)

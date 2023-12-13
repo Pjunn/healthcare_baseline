@@ -9,7 +9,7 @@ class Swin_base(BaseModel):
         super(Swin_base, self).__init__()
 
         model_name = 'swin_base_patch4_window7_224'
-        pretrained_weights_path = '/USER/weights/swin_base_patch4_window7_224_weights.pth'
+        pretrained_weights_path = '../weights/swin_base_patch4_window7_224-ms_in22k_ft_in1k_weights.pth'
 
         model = timm.create_model(model_name, pretrained=False)
         state_dict = torch.load(pretrained_weights_path)

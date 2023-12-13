@@ -4,12 +4,12 @@ import torch.nn as nn
 import timm
 from model.basemodel import BaseModel
 
-class Densenet121(BaseModel):
+class Efficientnet_v2_medium(BaseModel):
     def __init__(self):
-        super(Densenet121, self).__init__()
+        super(Efficientnet_v2_medium, self).__init__()
 
-        model_name = 'densenet121'
-        pretrained_weights_path = '../weights/densenet121-ra_in1k_weights.pth'
+        model_name = 'tf_efficientnetv2_m'
+        pretrained_weights_path = '../weights/tf_efficientnetv2_m-in21k_ft_in1k_weights.pth'
 
         model = timm.create_model(model_name, pretrained=False)
         state_dict = torch.load(pretrained_weights_path)
