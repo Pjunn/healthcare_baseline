@@ -13,9 +13,8 @@ from datasets.augmentation import *
 from model.basemodel import *
 from importlib import import_module
 
-def load_model(saved_model, device):
+def load_model(model_name, saved_model, device):
     
-    model_name = saved_model.split('_')[2]
     model_module_name = "model." + model_name.lower() + "_custom"
     model_module = getattr(import_module(model_module_name), model_name)
     model = model_module().to(device)
@@ -24,27 +23,40 @@ def load_model(saved_model, device):
 
     return model
 
+def restore_config(model_path):
+    model_dir = model_path.split('/')[2]
+    model_config_list = model_dir.split('_')[2:]
+    config = dict()
+    config['num_epochs'] = int(model_config_list.pop())
+    config['num_batches'] = int(model_config_list.pop())
+    config['size'] = int(model_config_list.pop())
+    config['criterion'] = model_config_list.pop()
+    config['augmentation'] = model_config_list.pop()
+    config['model'] = '_'.join(model_config_list)
+    return config
+
 def main(model_path):
     # Set the device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+    config = restore_config(model_path)
     # image size setting
-    size = 224
+    size = config['size']
 
     # transformations 
-    augmentation = BaseAugmentation
+    augmentation = config['augmentation']
     test_transform = augmentation(img_size=size, is_train=False)
 
     # hyperparameters
-    num_batches = 32
+    num_batches = config['num_batches']
 
     # test_df = pd.read_csv(f'/DATA/sample/sample.csv')
-    test_df = pd.read_csv(f'/DATA/test/test.csv')
+    test_df = pd.read_csv(f'/DATA/test/test.csv') #TODO 데이터 경로 수정
     test_dataset = BaselineTestDataset(test_df, transform=test_transform)
-    test_loader = DataLoader(test_dataset, batch_size=num_batches, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=num_batches, shuffle=False, num_workers=4)
 
     # model setting
-    model = load_model(model_path, device)
+    model = load_model(config['model'], model_path, device)
 
     model.eval()
     preds_list = []
@@ -56,11 +68,12 @@ def main(model_path):
             preds = torch.sigmoid(outputs).round()
             preds_list += preds.cpu().numpy().tolist()
 
-    test_df['risk'] = preds_list
-    test_df['risk'] = test_df['risk'].apply(lambda x: 'high' if x == 1 else 'low')
+    test_df['decayed'] = preds_list
+    test_df['decayed'] = test_df['decayed'].apply(lambda x: 'true' if x == 1 else 'false')
     
     # Create a folder for results if it doesn't exist
     os.makedirs('result', exist_ok=True)
+
     # Create the filename by changing the extension of the model filename to .csv
     result_filename = os.path.join('result', os.path.basename(model_path).replace('.pth', '.csv'))
     test_df.to_csv(result_filename, index=False)
