@@ -6,7 +6,7 @@ from torchvision.io import read_image
 from pathlib import Path
 
 # 이미지 폴더 경로
-image_folder_path = './../../Dataset/sample_data/image'
+image_folder_path = './../../Dataset/train_data/image'
 
 # 이미지 파일 경로 리스트
 image_paths = [str(p) for p in Path(image_folder_path).glob('*.png')]

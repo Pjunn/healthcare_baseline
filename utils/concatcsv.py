@@ -3,11 +3,11 @@ import os
 
 # CSV 파일 목록 (이 부분을 실제 파일 경로로 변경해야 함)
 csv_files = [
-    'testloweroutput.csv',
-    'testupperoutput.csv',
-    'testleftoutput.csv',
-    'testfrontoutput.csv',
-    'testrightoutput.csv'
+    'frontinput.csv',
+    'leftinput.csv',
+    'lowerinput.csv',
+    'rightinput.csv',
+    'upperinput.csv'
 ]
 
 # 모든 CSV 파일을 하나의 DataFrame으로 읽기

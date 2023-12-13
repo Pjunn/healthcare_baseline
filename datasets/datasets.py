@@ -14,7 +14,7 @@ class BaselineDataset(Dataset):
     
     def __getitem__(self, idx):
         img_name, __, __, label = self.df.iloc[idx]
-        img_fname = f'../Dataset/sample_data/image/{img_name}'
+        img_fname = f'../Dataset/train_data/imagemaskfast/{img_name}'
         img = Image.open(img_fname)
         img = np.array(img)
 
@@ -33,7 +33,7 @@ class BaselineTestDataset(Dataset):
     
     def __getitem__(self, idx):
         img_name = self.data[idx]
-        img_fname = f'../Dataset/sample_data/image/{img_name}'
+        img_fname = f'../Dataset/test_data/imagemaskfast/{img_name}'
         img = Image.open(img_fname)
         img = np.array(img)
         
